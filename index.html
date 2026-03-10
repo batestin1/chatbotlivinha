@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Livinha</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #0d0015;
+}
+#blip-target {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  inset: 0;
+}
+#blip-target iframe {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#clear-btn {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 9999;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.15s;
+  color: rgba(255,255,255,0.6);
+}
+#clear-btn:hover {
+  background: rgba(255, 80, 80, 0.35);
+  color: #fff;
+  transform: scale(1.1);
+}
+#clear-btn:active {
+  transform: scale(0.95);
+}
+#clear-btn svg {
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<div id="blip-target"></div>
+<button id="clear-btn" title="Limpar conversa">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"/>
+    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+    <path d="M10 11v6"/>
+    <path d="M14 11v6"/>
+    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+  </svg>
+</button>
+<script src="https://unpkg.com/blip-chat-widget@1.11.*" type="text/javascript"></script>
+<script>
+  var blipClient = null;
+
+  function buildChat() {
+    blipClient = new BlipChat()
+      .withAppKey('bHl2aW5oYTozZDNhZTlmYS1jM2YwLTRiMmEtOWQyYi0yOGVlMmM0N2FiOWU=')
+      .withCustomCommonUrl('https://mayconcipriano-4de7c.chat.blip.ai/')
+      .withTarget('blip-target')
+      .build();
+  }
+
+  function clearChat() {
+    // 1. Destruir a instância atual se existir
+    try {
+      if (blipClient) {
+        blipClient.destroy();
+        blipClient = null;
+      }
+    } catch(e) { console.warn('destroy error:', e); }
+
+    // 2. Limpar TODO o localStorage relacionado ao blip
+    try {
+      var keysToRemove = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key) keysToRemove.push(key);
+      }
+      keysToRemove.forEach(function(key) {
+        if (
+          key.toLowerCase().includes('blip') ||
+          key.toLowerCase().includes('account') ||
+          key.toLowerCase().includes('livinha') ||
+          key.toLowerCase().includes('chat') ||
+          key.toLowerCase().includes('thread')
+        ) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch(e) { console.warn('localStorage error:', e); }
+
+    // 3. Limpar sessionStorage também
+    try { sessionStorage.clear(); } catch(e) {}
+
+    // 4. Limpar o DOM completamente e recriar o target
+    var oldTarget = document.getElementById('blip-target');
+    if (oldTarget) oldTarget.remove();
+
+    var newTarget = document.createElement('div');
+    newTarget.id = 'blip-target';
+    document.body.insertBefore(newTarget, document.getElementById('clear-btn'));
+
+    // 5. Aguardar DOM estabilizar e recriar o chat
+    setTimeout(function() {
+      buildChat();
+    }, 300);
+  }
+
+  document.getElementById('clear-btn').addEventListener('click', clearChat);
+
+  window.onload = function() {
+    buildChat();
+  };
+</script>
+</body>
+</html>
