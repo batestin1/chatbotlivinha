@@ -58,6 +58,29 @@ html, body {
   height: 16px;
   pointer-events: none;
 }
+#footer-credits {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  font-family: sans-serif;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.02em;
+}
+#footer-credits a {
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  pointer-events: all;
+  transition: color 0.2s;
+}
+#footer-credits a:hover {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: underline;
+}
 </style>
 </head>
 <body>
@@ -71,10 +94,17 @@ html, body {
     <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
   </svg>
 </button>
+
+<div id="footer-credits">
+  Desenvolvido por:
+  <a href="https://www.linkedin.com/in/cristiane-rodrigues-da-silva/" target="_blank" rel="noopener noreferrer">Cristiane Rodrigues da Silva</a>
+  &amp;
+  <a href="https://www.linkedin.com/in/mayconbatestin/" target="_blank" rel="noopener noreferrer">Maycon Cypriano Batestin</a>
+</div>
+
 <script src="https://unpkg.com/blip-chat-widget@1.11.*" type="text/javascript"></script>
 <script>
   var blipClient = null;
-
   function buildChat() {
     blipClient = new BlipChat()
       .withAppKey('bHl2aW5oYTozZDNhZTlmYS1jM2YwLTRiMmEtOWQyYi0yOGVlMmM0N2FiOWU=')
@@ -82,7 +112,6 @@ html, body {
       .withTarget('blip-target')
       .build();
   }
-
   function clearChat() {
     // 1. Destruir a instância atual se existir
     try {
@@ -91,7 +120,6 @@ html, body {
         blipClient = null;
       }
     } catch(e) { console.warn('destroy error:', e); }
-
     // 2. Limpar TODO o localStorage relacionado ao blip
     try {
       var keysToRemove = [];
@@ -111,26 +139,20 @@ html, body {
         }
       });
     } catch(e) { console.warn('localStorage error:', e); }
-
     // 3. Limpar sessionStorage também
     try { sessionStorage.clear(); } catch(e) {}
-
     // 4. Limpar o DOM completamente e recriar o target
     var oldTarget = document.getElementById('blip-target');
     if (oldTarget) oldTarget.remove();
-
     var newTarget = document.createElement('div');
     newTarget.id = 'blip-target';
     document.body.insertBefore(newTarget, document.getElementById('clear-btn'));
-
     // 5. Aguardar DOM estabilizar e recriar o chat
     setTimeout(function() {
       buildChat();
     }, 300);
   }
-
   document.getElementById('clear-btn').addEventListener('click', clearChat);
-
   window.onload = function() {
     buildChat();
   };
