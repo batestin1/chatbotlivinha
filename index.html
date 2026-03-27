@@ -60,25 +60,31 @@ html, body {
 }
 #footer-credits {
   position: fixed;
-  bottom: 8px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 9999;
+  z-index: 2147483647;
   font-family: sans-serif;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.75);
   white-space: nowrap;
   pointer-events: none;
   letter-spacing: 0.02em;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 #footer-credits a {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   pointer-events: all;
   transition: color 0.2s;
 }
 #footer-credits a:hover {
-  color: rgba(255, 255, 255, 0.9);
+  color: #fff;
   text-decoration: underline;
 }
 </style>
